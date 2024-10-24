@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Database</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.3.0/milligram.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+        h1 {
+            color: #4caf50; /* Light Green */
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4caf50; /* Light Green */
+            color: white;
+        }
+        td {
+            background-color: #f7f7f7;
+        }
+        .button {
+            background-color: #4caf50; /* Light Green */
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #45a045;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rule Database</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Rule ID</th>
+                <th>Rule Logic (AST)</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rule in rules %}
+            <tr>
+                <td>{{ rule.rule_id }}</td>
+                <td>{{ rule.rule_ast }}</td>
+                <td>{{ rule.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <a href="/" class="button">Back to Chat</a>
+    
+    <div>
+        <h3>Clear All Rules</h3>
+        <button class="button" onclick="clearAllRules()">Clear All Rules</button>
+    </div>
+    
+    <script type="text/javascript">
+        function clearAllRules() {
+            if (confirm("Are you sure you want to clear all rules? This action cannot be undone.")) {
+                fetch('/clear_rules', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        location.reload();
+                    } else if (data.error) {
+                        alert("Error: " + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while clearing rules.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
